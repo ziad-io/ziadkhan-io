@@ -384,6 +384,12 @@ function App() {
           Dashboard
         </button>
         <button 
+          className={activeTab === 'analytics' ? 'active' : ''}
+          onClick={() => setActiveTab('analytics')}
+        >
+          Analytics
+        </button>
+        <button 
           className={activeTab === 'records' ? 'active' : ''}
           onClick={() => setActiveTab('records')}
         >
@@ -640,6 +646,66 @@ function App() {
                 </tbody>
               </table>
               {(selectedClass === 'All' ? students : students.filter(s => s.class === selectedClass)).length === 0 && <p>No student records found.</p>}
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'analytics' && (
+          <div className="analytics">
+            <h2>Analytics Dashboard</h2>
+            <div className="class-filter">
+              <label>Filter by Class:</label>
+              <select 
+                value={selectedClass} 
+                onChange={(e) => setSelectedClass(e.target.value)}
+                className="class-select"
+              >
+                <option value="All">All Classes</option>
+                <option value="1">Class 1</option>
+                <option value="2">Class 2</option>
+                <option value="3">Class 3</option>
+                <option value="4">Class 4</option>
+                <option value="5">Class 5</option>
+              </select>
+            </div>
+            <div className="stats-grid">
+              <div className="stat-card">
+                <h3>Class Statistics</h3>
+                <p>Total Students: {stats.totalStudents}</p>
+                <p>Average Percentage: {stats.avgPercentage}%</p>
+                <p>Pass Rate: {stats.passRate}%</p>
+              </div>
+              <div className="stat-card">
+                <h3>Top Students</h3>
+                {topStudents.length > 0 ? (
+                  <ul>
+                    {topStudents.map((student, index) => (
+                      <li key={student.rollNumber || index}>
+                        {student.rollNumber} - {student.studentName} ({student.results?.percentage || 0}%)
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>No students found</p>
+                )}
+              </div>
+              <div className="stat-card">
+                <h3>Grade Distribution</h3>
+                {Object.entries(gradeDistribution).map(([grade, count]) => (
+                  <div key={grade} className="grade-bar">
+                    <span>{grade}: </span>
+                    <div className="bar">
+                      <div 
+                        className="fill" 
+                        style={{ 
+                          width: `${stats.totalStudents > 0 ? (count / stats.totalStudents) * 100 : 0}%` 
+                        }}
+                      ></div>
+                    </div>
+                    <span>{count}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}
