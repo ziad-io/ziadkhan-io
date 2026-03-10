@@ -20,22 +20,14 @@
     },
     {
       "src": "/api/students",
-      "method": "GET",
-      "dest": "/api/students/index.js"
-    },
-    {
-      "src": "/api/students",
-      "method": "POST",
       "dest": "/api/students/index.js"
     },
     {
       "src": "/api/students/(.*)",
-      "method": "DELETE",
       "dest": "/api/students/[rollNumber].js"
     },
     {
       "src": "/api/analytics",
-      "method": "GET",
       "dest": "/api/analytics.js"
     },
     {
