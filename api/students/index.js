@@ -1,12 +1,27 @@
 const mongoose = require('mongoose')
 
-// MongoDB connection
+// MongoDB connection with retry logic
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/gps_dmc_db'
 
-mongoose.connect(MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
+let isConnected = false
+
+const connectDB = async () => {
+  if (isConnected) return
+  
+  try {
+    await mongoose.connect(MONGODB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+    })
+    isConnected = true
+    console.log('Connected to MongoDB')
+  } catch (error) {
+    console.error('MongoDB connection error:', error)
+    isConnected = false
+  }
+}
 
 // Student Schema
 const StudentSchema = new mongoose.Schema({
@@ -53,6 +68,17 @@ module.exports = async (req, res) => {
   // Handle GET request - get all students
   if (req.method === 'GET') {
     try {
+      // Connect to database
+      await connectDB()
+      
+      if (!isConnected) {
+        return res.status(500).json({ 
+          error: 'Database connection failed',
+          message: 'Unable to connect to MongoDB. Please check your connection string.',
+          fallback: []
+        })
+      }
+      
       const students = await Student.find({ isActive: true })
         .sort({ createdAt: -1 })
         .select('-__v -isActive')
@@ -60,7 +86,11 @@ module.exports = async (req, res) => {
       res.status(200).json(students)
     } catch (error) {
       console.error('Error fetching students:', error)
-      res.status(500).json({ error: 'Failed to fetch students', details: error.message })
+      res.status(500).json({ 
+        error: 'Failed to fetch students', 
+        details: error.message,
+        fallback: []
+      })
     }
     return
   }
@@ -68,6 +98,17 @@ module.exports = async (req, res) => {
   // Handle POST request - add/update student
   if (req.method === 'POST') {
     try {
+      // Connect to database
+      await connectDB()
+      
+      if (!isConnected) {
+        return res.status(500).json({ 
+          error: 'Database connection failed',
+          message: 'Unable to connect to MongoDB. Please check your connection string.',
+          fallback: { success: false }
+        })
+      }
+      
       const studentData = req.body
       
       if (!studentData.rollNumber || !studentData.studentName || !studentData.fatherName) {
@@ -124,7 +165,11 @@ module.exports = async (req, res) => {
       if (error.code === 11000) {
         return res.status(400).json({ error: 'Roll number already exists' })
       }
-      res.status(500).json({ error: 'Failed to save student', details: error.message })
+      res.status(500).json({ 
+        error: 'Failed to save student', 
+        details: error.message,
+        fallback: { success: false }
+      })
     }
     return
   }

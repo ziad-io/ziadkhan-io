@@ -1,12 +1,27 @@
 const mongoose = require('mongoose')
 
-// MongoDB connection
+// MongoDB connection with retry logic
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/gps_dmc_db'
 
-mongoose.connect(MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
+let isConnected = false
+
+const connectDB = async () => {
+  if (isConnected) return
+  
+  try {
+    await mongoose.connect(MONGODB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+    })
+    isConnected = true
+    console.log('Connected to MongoDB')
+  } catch (error) {
+    console.error('MongoDB connection error:', error)
+    isConnected = false
+  }
+}
 
 // Student Schema
 const StudentSchema = new mongoose.Schema({
@@ -55,6 +70,21 @@ module.exports = async (req, res) => {
   }
   
   try {
+    // Connect to database
+    await connectDB()
+    
+    if (!isConnected) {
+      return res.status(500).json({ 
+        error: 'Database connection failed',
+        message: 'Unable to connect to MongoDB. Please check your connection string.',
+        fallback: {
+          totalStudents: 0,
+          avgPercentage: 0,
+          passRate: 0
+        }
+      })
+    }
+    
     const { type, class: className, limit } = req.query
     
     // Get class statistics
@@ -121,6 +151,14 @@ module.exports = async (req, res) => {
     res.status(400).json({ error: 'Invalid analytics type. Use: statistics, top-students, or grade-distribution' })
   } catch (error) {
     console.error('Error fetching analytics:', error)
-    res.status(500).json({ error: 'Failed to fetch analytics', details: error.message })
+    res.status(500).json({ 
+      error: 'Failed to fetch analytics', 
+      details: error.message,
+      fallback: {
+        totalStudents: 0,
+        avgPercentage: 0,
+        passRate: 0
+      }
+    })
   }
 }
