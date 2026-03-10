@@ -31,8 +31,12 @@
       "dest": "/api/analytics.js"
     },
     {
-      "src": "/(.*)",
+      "src": "/(.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2))",
       "dest": "/GpsDmc/dist/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/GpsDmc/dist/index.html"
     }
   ]
 }
