@@ -37,9 +37,20 @@ const StudentSchema = new mongoose.Schema({
 
 const Student = mongoose.models.Student || mongoose.model('Student', StudentSchema)
 
-// Add or update student
+// Add or update student - handle GET and POST
 module.exports = async (req, res) => {
-  // Handle different HTTP methods
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*')
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+  
+  // Handle OPTIONS preflight
+  if (req.method === 'OPTIONS') {
+    res.status(200).end()
+    return
+  }
+  
+  // Handle GET request - get all students
   if (req.method === 'GET') {
     try {
       const students = await Student.find({ isActive: true })
@@ -49,10 +60,12 @@ module.exports = async (req, res) => {
       res.status(200).json(students)
     } catch (error) {
       console.error('Error fetching students:', error)
-      res.status(500).json({ error: 'Failed to fetch students' })
+      res.status(500).json({ error: 'Failed to fetch students', details: error.message })
     }
+    return
   }
   
+  // Handle POST request - add/update student
   if (req.method === 'POST') {
     try {
       const studentData = req.body
@@ -113,5 +126,9 @@ module.exports = async (req, res) => {
       }
       res.status(500).json({ error: 'Failed to save student', details: error.message })
     }
+    return
   }
+  
+  // Handle other methods
+  res.status(405).json({ error: 'Method not allowed. Use GET or POST' })
 }

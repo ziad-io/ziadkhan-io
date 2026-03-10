@@ -37,12 +37,29 @@ const StudentSchema = new mongoose.Schema({
 
 const Student = mongoose.models.Student || mongoose.model('Student', StudentSchema)
 
-// Analytics endpoints
+// Analytics endpoints - handle different query parameters
 module.exports = async (req, res) => {
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*')
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+  
+  // Handle OPTIONS preflight
+  if (req.method === 'OPTIONS') {
+    res.status(200).end()
+    return
+  }
+  
+  if (req.method !== 'GET') {
+    return res.status(405).json({ error: 'Method not allowed' })
+  }
+  
   try {
+    const { type, class: className, limit } = req.query
+    
     // Get class statistics
-    if (req.query.type === 'statistics') {
-      const classFilter = req.query.class ? { class: req.query.class } : {}
+    if (type === 'statistics') {
+      const classFilter = className ? { class: className } : {}
       
       const students = await Student.find({ ...classFilter, isActive: true })
       
@@ -69,21 +86,21 @@ module.exports = async (req, res) => {
     }
     
     // Get top students
-    if (req.query.type === 'top-students') {
-      const classFilter = req.query.class ? { class: req.query.class } : {}
-      const limit = parseInt(req.query.limit) || 3
+    if (type === 'top-students') {
+      const classFilter = className ? { class: className } : {}
+      const studentLimit = parseInt(limit) || 3
       
       const topStudents = await Student.find({ ...classFilter, isActive: true })
         .sort({ 'results.percentage': -1 })
-        .limit(limit)
+        .limit(studentLimit)
         .select('studentName rollNumber class results')
       
       return res.json(topStudents)
     }
     
     // Get grade distribution
-    if (req.query.type === 'grade-distribution') {
-      const classFilter = req.query.class ? { class: req.query.class } : {}
+    if (type === 'grade-distribution') {
+      const classFilter = className ? { class: className } : {}
       
       const students = await Student.find({ ...classFilter, isActive: true })
       
@@ -101,9 +118,9 @@ module.exports = async (req, res) => {
       return res.json(gradeCounts)
     }
     
-    res.status(400).json({ error: 'Invalid analytics type' })
+    res.status(400).json({ error: 'Invalid analytics type. Use: statistics, top-students, or grade-distribution' })
   } catch (error) {
     console.error('Error fetching analytics:', error)
-    res.status(500).json({ error: 'Failed to fetch analytics' })
+    res.status(500).json({ error: 'Failed to fetch analytics', details: error.message })
   }
 }
