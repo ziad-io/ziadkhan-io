@@ -34,8 +34,5 @@
       "src": "/(.*)",
       "dest": "/GpsDmc/dist/$1"
     }
-  ],
-  "env": {
-    "MONGODB_URI": "@mongodb-uri"
-  }
+  ]
 }
