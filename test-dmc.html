@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPS Harkay DMC Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8fafc;
+            margin: 0;
+            padding: 2rem;
+        }
+        
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        
+        .marks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            margin-right: 1rem;
+        }
+        
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #64748b;
+            color: white;
+        }
+        
+        .dmc-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+        }
+        
+        .dmc-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .dmc-header h1 {
+            color: #2563eb;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .dmc-header h2 {
+            color: #1e293b;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+        
+        .dmc-student-info {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+        
+        .dmc-student-info p {
+            margin: 0.5rem 0;
+            font-size: 1.1rem;
+        }
+        
+        .dmc-marks table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1.5rem;
+        }
+        
+        .dmc-marks th,
+        .dmc-marks td {
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            text-align: left;
+        }
+        
+        .dmc-marks th {
+            background: #2563eb;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .dmc-marks .total-row {
+            background: #f8fafc;
+            font-weight: bold;
+        }
+        
+        .dmc-result {
+            text-align: center;
+            padding: 1.5rem;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 2px solid #2563eb;
+        }
+        
+        .dmc-result p {
+            font-size: 1.2rem;
+            margin: 0.5rem 0;
+        }
+        
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            
+            .test-container {
+                display: none;
+            }
+            
+            .dmc-container {
+                box-shadow: none;
+                border: none;
+                margin: 0;
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>GPS Harkay DMC Test</h1>
+        <p>Fill in the form below to test DMC generation:</p>
+        
+        <div class="form-group">
+            <label for="rollNumber">Roll Number *</label>
+            <input type="text" id="rollNumber" placeholder="Enter Roll Number">
+        </div>
+        
+        <div class="form-group">
+            <label for="studentName">Student Name *</label>
+            <input type="text" id="studentName" placeholder="Enter Student Name">
+        </div>
+        
+        <div class="form-group">
+            <label for="fatherName">Father Name *</label>
+            <input type="text" id="fatherName" placeholder="Enter Father Name">
+        </div>
+        
+        <div class="form-group">
+            <label for="section">Section</label>
+            <select id="section">
+                <option value="A">Section A</option>
+                <option value="B">Section B</option>
+            </select>
+        </div>
+        
+        <h3>Subject Marks</h3>
+        <div class="marks-grid">
+            <div class="form-group">
+                <label for="english">English (0-100)</label>
+                <input type="number" id="english" min="0" max="100" placeholder="0-100">
+            </div>
+            <div class="form-group">
+                <label for="maths">Maths (0-100)</label>
+                <input type="number" id="maths" min="0" max="100" placeholder="0-100">
+            </div>
+            <div class="form-group">
+                <label for="pakStudy">Pak Study (0-100)</label>
+                <input type="number" id="pakStudy" min="0" max="100" placeholder="0-100">
+            </div>
+            <div class="form-group">
+                <label for="islamiat">Islamiat (0-100)</label>
+                <input type="number" id="islamiat" min="0" max="100" placeholder="0-100">
+            </div>
+            <div class="form-group">
+                <label for="pashto">Pashto (0-100)</label>
+                <input type="number" id="pashto" min="0" max="100" placeholder="0-100">
+            </div>
+        </div>
+        
+        <button class="btn btn-primary" onclick="generateDMC()">Generate DMC</button>
+        <button class="btn btn-secondary" onclick="window.print()">Print DMC</button>
+    </div>
+    
+    <div id="dmcOutput"></div>
+    
+    <script>
+        function calculateGrade(percentage, marks) {
+            const failRule = Object.values(marks).some(mark => mark < 33);
+            if (failRule) return 'Fail';
+            
+            if (percentage >= 90) return 'A+';
+            if (percentage >= 80) return 'A';
+            if (percentage >= 70) return 'B';
+            if (percentage >= 50) return 'C';
+            return 'Fail';
+        }
+        
+        function generateDMC() {
+            const studentData = {
+                rollNumber: document.getElementById('rollNumber').value,
+                studentName: document.getElementById('studentName').value,
+                fatherName: document.getElementById('fatherName').value,
+                section: document.getElementById('section').value,
+                english: parseInt(document.getElementById('english').value) || 0,
+                maths: parseInt(document.getElementById('maths').value) || 0,
+                pakStudy: parseInt(document.getElementById('pakStudy').value) || 0,
+                islamiat: parseInt(document.getElementById('islamiat').value) || 0,
+                pashto: parseInt(document.getElementById('pashto').value) || 0
+            };
+            
+            if (!studentData.rollNumber || !studentData.studentName || !studentData.fatherName) {
+                alert('Please fill all required fields');
+                return;
+            }
+            
+            const marks = {
+                english: studentData.english,
+                maths: studentData.maths,
+                pakStudy: studentData.pakStudy,
+                islamiat: studentData.islamiat,
+                pashto: studentData.pashto
+            };
+            
+            const total = Object.values(marks).reduce((sum, mark) => sum + mark, 0);
+            const percentage = (total / 500) * 100;
+            const grade = calculateGrade(percentage, marks);
+            
+            const dmcHTML = `
+                <div class="dmc-container">
+                    <div class="dmc-header">
+                        <h1>GPS Harkay</h1>
+                        <h2>Detailed Marks Certificate</h2>
+                        <p>Class: 5th | Section: ${studentData.section}</p>
+                    </div>
+                    <div class="dmc-student-info">
+                        <p><strong>Roll Number:</strong> ${studentData.rollNumber}</p>
+                        <p><strong>Student Name:</strong> ${studentData.studentName}</p>
+                        <p><strong>Father Name:</strong> ${studentData.fatherName}</p>
+                    </div>
+                    <div class="dmc-marks">
+                        <table>
+                            <tr><th>Subject</th><th>Marks</th></tr>
+                            <tr><td>English</td><td>${studentData.english}</td></tr>
+                            <tr><td>Mathematics</td><td>${studentData.maths}</td></tr>
+                            <tr><td>Pak Study</td><td>${studentData.pakStudy}</td></tr>
+                            <tr><td>Islamiat</td><td>${studentData.islamiat}</td></tr>
+                            <tr><td>Pashto</td><td>${studentData.pashto}</td></tr>
+                            <tr class="total-row"><td><strong>Total</strong></td><td><strong>${total}</strong></td></tr>
+                        </table>
+                    </div>
+                    <div class="dmc-result">
+                        <p><strong>Percentage:</strong> ${percentage.toFixed(2)}%</p>
+                        <p><strong>Grade:</strong> ${grade}</p>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('dmcOutput').innerHTML = dmcHTML;
+        }
+        
+        // Add sample data for testing
+        window.onload = function() {
+            document.getElementById('rollNumber').value = '001';
+            document.getElementById('studentName').value = 'Ahmed Khan';
+            document.getElementById('fatherName').value = 'Muhammad Khan';
+            document.getElementById('english').value = '85';
+            document.getElementById('maths').value = '92';
+            document.getElementById('pakStudy').value = '78';
+            document.getElementById('islamiat').value = '88';
+            document.getElementById('pashto').value = '90';
+        };
+    </script>
+</body>
+</html>
