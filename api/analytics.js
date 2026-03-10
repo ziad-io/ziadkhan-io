@@ -70,22 +70,70 @@ module.exports = async (req, res) => {
   }
   
   try {
-    // Connect to database
+    const { type, class: className, limit } = req.query
+    
+    // Return fallback data immediately if no MongoDB
+    if (!process.env.MONGODB_URI || process.env.MONGODB_URI.includes('localhost')) {
+      console.log('Using fallback data - no MongoDB URI configured')
+      
+      if (type === 'statistics') {
+        return res.json({
+          totalStudents: 0,
+          avgPercentage: 0,
+          passRate: 0,
+          message: 'Demo mode - configure MongoDB for real data'
+        })
+      }
+      
+      if (type === 'top-students') {
+        return res.json([
+          {
+            rollNumber: '001',
+            studentName: 'Demo Student',
+            class: '1',
+            results: { percentage: 85 }
+          }
+        ])
+      }
+      
+      if (type === 'grade-distribution') {
+        return res.json({
+          'A+': 0, 'A': 0, 'B': 0, 'C': 0, 'D': 0, 'F': 0,
+          message: 'Demo mode - configure MongoDB for real data'
+        })
+      }
+      
+      return res.status(400).json({ error: 'Invalid analytics type. Use: statistics, top-students, or grade-distribution' })
+    }
+    
+    // Try to connect to database
     await connectDB()
     
     if (!isConnected) {
-      return res.status(500).json({ 
-        error: 'Database connection failed',
-        message: 'Unable to connect to MongoDB. Please check your connection string.',
-        fallback: {
+      console.log('MongoDB connection failed, using fallback data')
+      
+      if (type === 'statistics') {
+        return res.json({
           totalStudents: 0,
           avgPercentage: 0,
-          passRate: 0
-        }
-      })
+          passRate: 0,
+          error: 'Database connection failed'
+        })
+      }
+      
+      if (type === 'top-students') {
+        return res.json([])
+      }
+      
+      if (type === 'grade-distribution') {
+        return res.json({
+          'A+': 0, 'A': 0, 'B': 0, 'C': 0, 'D': 0, 'F': 0,
+          error: 'Database connection failed'
+        })
+      }
+      
+      return res.status(400).json({ error: 'Invalid analytics type. Use: statistics, top-students, or grade-distribution' })
     }
-    
-    const { type, class: className, limit } = req.query
     
     // Get class statistics
     if (type === 'statistics') {
