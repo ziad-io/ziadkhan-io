@@ -158,8 +158,8 @@ export const apiService = {
   async getClassStatistics(className = null) {
     try {
       const url = className 
-        ? `${API_BASE_URL}/stats/class/${className}`
-        : `${API_BASE_URL}/stats/class`
+        ? `${API_BASE_URL}/analytics?type=statistics&class=${className}`
+        : `${API_BASE_URL}/analytics?type=statistics`
       
       const response = await fetch(url)
       if (!response.ok) {
@@ -178,8 +178,8 @@ export const apiService = {
   async getGradeDistribution(className = null) {
     try {
       const url = className 
-        ? `${API_BASE_URL}/stats/grades/${className}`
-        : `${API_BASE_URL}/stats/grades`
+        ? `${API_BASE_URL}/analytics?type=grade-distribution&class=${className}`
+        : `${API_BASE_URL}/analytics?type=grade-distribution`
       
       const response = await fetch(url)
       if (!response.ok) {
@@ -198,8 +198,8 @@ export const apiService = {
   async getTopStudents(className = null, limit = 3) {
     try {
       const url = className 
-        ? `${API_BASE_URL}/stats/top/${className}?limit=${limit}`
-        : `${API_BASE_URL}/stats/top?limit=${limit}`
+        ? `${API_BASE_URL}/analytics?type=top-students&class=${className}&limit=${limit}`
+        : `${API_BASE_URL}/analytics?type=top-students&limit=${limit}`
       
       const response = await fetch(url)
       if (!response.ok) {
