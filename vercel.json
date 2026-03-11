@@ -15,32 +15,12 @@
   ],
   "routes": [
     {
-      "src": "/api/health",
-      "dest": "/api/health.js"
-    },
-    {
-      "src": "/api/students",
-      "dest": "/api/students/index.js"
-    },
-    {
-      "src": "/api/students/(.*)",
-      "dest": "/api/students/[rollNumber].js"
-    },
-    {
-      "src": "/api/analytics",
-      "dest": "/api/analytics.js"
-    },
-    {
-      "src": "/assets/(.*)",
-      "dest": "/GpsDmc/dist/assets/$1"
-    },
-    {
-      "src": "/(.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2))",
-      "dest": "/GpsDmc/dist/$1"
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
     },
     {
       "src": "/(.*)",
-      "dest": "/GpsDmc/dist/index.html"
+      "dest": "/GpsDmc/dist/$1"
     }
   ]
 }
