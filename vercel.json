@@ -31,6 +31,10 @@
       "dest": "/api/analytics.js"
     },
     {
+      "src": "/assets/(.*)",
+      "dest": "/GpsDmc/dist/assets/$1"
+    },
+    {
       "src": "/(.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2))",
       "dest": "/GpsDmc/dist/$1"
     },
@@ -38,8 +42,5 @@
       "src": "/(.*)",
       "dest": "/GpsDmc/dist/index.html"
     }
-  ],
-  "installCommand": "cd GpsDmc && npm install",
-  "buildCommand": "cd GpsDmc && npm run build",
-  "outputDirectory": "GpsDmc/dist"
+  ]
 }
