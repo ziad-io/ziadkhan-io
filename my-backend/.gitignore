@@ -20,6 +20,18 @@ dist-ssr
 
 # Editor directories and files
 .vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
-# Build artifacts
-.vercel
+# Database
+*.mongodb
+*.sqlite
+
+# OS files
+Thumbs.db
