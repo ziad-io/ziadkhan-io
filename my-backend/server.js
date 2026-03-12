@@ -307,6 +307,47 @@ app.get('/api/stats/top/:className?', async (req, res) => {
   }
 })
 
+// Analytics endpoint (combined for frontend compatibility)
+app.get('/api/analytics', async (req, res) => {
+  try {
+    const { type, class: className, limit } = req.query
+    console.log('Analytics request:', { type, className, limit })
+    
+    // Set CORS headers
+    res.setHeader('Access-Control-Allow-Origin', '*')
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+    
+    if (type === 'statistics') {
+      const stats = await Student.getClassStatistics(className)
+      return res.json(stats[0] || { avgPercentage: 0, passRate: 0, totalStudents: 0 })
+    }
+    
+    if (type === 'top-students') {
+      const students = await Student.getTopStudents(className, parseInt(limit) || 3)
+        .select('-__v -isActive -marks')
+      return res.json(students)
+    }
+    
+    if (type === 'grade-distribution') {
+      const distribution = await Student.getGradeDistribution(className)
+      const result = { 'A+': 0, 'A': 0, 'B': 0, 'C': 0, 'D': 0, 'F': 0 }
+      distribution.forEach(item => {
+        result[item._id] = item.count
+      })
+      return res.json(result)
+    }
+    
+    return res.status(400).json({ error: 'Invalid analytics type. Use: statistics, top-students, or grade-distribution' })
+  } catch (error) {
+    console.error('Analytics API error:', error)
+    res.status(500).json({ 
+      error: 'Failed to fetch analytics', 
+      details: error.message 
+    })
+  }
+})
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Unhandled error:', err)
