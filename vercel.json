@@ -1,3 +1,40 @@
 {
-  "version": 2
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/**/*.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "buildCommand": "npm run build",
+        "outputDirectory": "GpsDmc/dist",
+        "installCommand": "npm install"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "/GpsDmc/dist/assets/$1"
+    },
+    {
+      "src": "/vite.svg",
+      "dest": "/GpsDmc/dist/vite.svg"
+    },
+    {
+      "src": "/(.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2))",
+      "dest": "/GpsDmc/dist/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/GpsDmc/dist/index.html"
+    }
+  ]
 }
