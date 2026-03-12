@@ -6,10 +6,12 @@
       "use": "@vercel/node"
     },
     {
-      "src": "GpsDmc/package.json",
+      "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "dist"
+        "buildCommand": "npm run build",
+        "outputDirectory": "GpsDmc/dist",
+        "installCommand": "npm install"
       }
     }
   ],
