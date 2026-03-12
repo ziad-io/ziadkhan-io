@@ -332,11 +332,16 @@ function App() {
 
   const loadAnalytics = async () => {
     try {
+      console.log('🔄 Loading analytics for class:', selectedClass)
       const [statsData, topStudentsData, gradeData] = await Promise.all([
         apiService.getClassStatistics(selectedClass === 'All' ? null : selectedClass),
         apiService.getTopStudents(selectedClass === 'All' ? null : selectedClass, 3),
         apiService.getGradeDistribution(selectedClass === 'All' ? null : selectedClass)
       ])
+      
+      console.log('📊 Received stats data:', statsData)
+      console.log('🏆 Received top students:', topStudentsData)
+      console.log('📈 Received grade distribution:', gradeData)
       
       // Ensure we have valid data with defaults
       setStats(statsData || { avgPercentage: 0, passRate: 0, totalStudents: 0 })
