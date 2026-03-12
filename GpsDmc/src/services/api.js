@@ -161,12 +161,16 @@ export const apiService = {
         ? `${API_BASE_URL}/analytics?type=statistics&class=${className}`
         : `${API_BASE_URL}/analytics?type=statistics`
       
+      console.log('🔍 Fetching statistics from:', url)
       const response = await fetch(url)
+      console.log('📥 Response status:', response.status)
+      
       if (!response.ok) {
         console.error('❌ Failed to get class statistics:', response.status)
         return { avgPercentage: 0, passRate: 0, totalStudents: 0 }
       }
       const data = await response.json()
+      console.log('📊 Statistics data:', data)
       return data || { avgPercentage: 0, passRate: 0, totalStudents: 0 }
     } catch (error) {
       console.error('❌ Error getting class statistics:', error)
@@ -181,12 +185,16 @@ export const apiService = {
         ? `${API_BASE_URL}/analytics?type=grade-distribution&class=${className}`
         : `${API_BASE_URL}/analytics?type=grade-distribution`
       
+      console.log('🔍 Fetching grade distribution from:', url)
       const response = await fetch(url)
+      console.log('📥 Response status:', response.status)
+      
       if (!response.ok) {
         console.error('❌ Failed to get grade distribution:', response.status)
         return { 'A+': 0, 'A': 0, 'B': 0, 'C': 0, 'D': 0, 'F': 0 }
       }
       const data = await response.json()
+      console.log('📈 Grade distribution data:', data)
       return data || { 'A+': 0, 'A': 0, 'B': 0, 'C': 0, 'D': 0, 'F': 0 }
     } catch (error) {
       console.error('❌ Error getting grade distribution:', error)
@@ -201,12 +209,16 @@ export const apiService = {
         ? `${API_BASE_URL}/analytics?type=top-students&class=${className}&limit=${limit}`
         : `${API_BASE_URL}/analytics?type=top-students&limit=${limit}`
       
+      console.log('🔍 Fetching top students from:', url)
       const response = await fetch(url)
+      console.log('📥 Response status:', response.status)
+      
       if (!response.ok) {
         console.error('❌ Failed to get top students:', response.status)
         return []
       }
       const data = await response.json()
+      console.log('🏆 Top students data:', data)
       return Array.isArray(data) ? data : []
     } catch (error) {
       console.error('❌ Error getting top students:', error)
