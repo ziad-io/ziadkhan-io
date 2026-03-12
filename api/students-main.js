@@ -9,12 +9,7 @@ const connectDB = async () => {
   if (isConnected) return
   
   try {
-    await mongoose.connect(MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      serverSelectionTimeoutMS: 5000,
-      socketTimeoutMS: 45000,
-    })
+    await mongoose.connect(MONGODB_URI)
     isConnected = true
     console.log('Connected to MongoDB')
   } catch (error) {
