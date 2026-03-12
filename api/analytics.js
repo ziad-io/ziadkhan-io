@@ -115,108 +115,11 @@ module.exports = async (req, res) => {
     }
     
     return res.status(400).json({ error: 'Invalid analytics type. Use: statistics, top-students, or grade-distribution' })
-    
-    // Try to connect to database
-    await connectDB()
-    
-    if (!isConnected) {
-      console.log('MongoDB connection failed, using fallback data')
-      
-      if (type === 'statistics') {
-        return res.json({
-          totalStudents: 0,
-          avgPercentage: 0,
-          passRate: 0,
-          error: 'Database connection failed'
-        })
-      }
-      
-      if (type === 'top-students') {
-        return res.json([])
-      }
-      
-      if (type === 'grade-distribution') {
-        return res.json({
-          'A+': 0, 'A': 0, 'B': 0, 'C': 0, 'D': 0, 'F': 0,
-          error: 'Database connection failed'
-        })
-      }
-      
-      return res.status(400).json({ error: 'Invalid analytics type. Use: statistics, top-students, or grade-distribution' })
-    }
-    
-    // Get class statistics
-    if (type === 'statistics') {
-      const classFilter = className ? { class: className } : {}
-      
-      const students = await Student.find({ ...classFilter, isActive: true })
-      
-      if (students.length === 0) {
-        return res.json({
-          totalStudents: 0,
-          avgPercentage: 0,
-          passRate: 0
-        })
-      }
-      
-      const totalStudents = students.length
-      const totalPercentage = students.reduce((sum, s) => sum + (s.results?.percentage || 0), 0)
-      const avgPercentage = (totalPercentage / totalStudents).toFixed(2)
-      
-      const passCount = students.filter(s => s.results?.grade !== 'F').length
-      const passRate = ((passCount / totalStudents) * 100).toFixed(2)
-      
-      return res.json({
-        totalStudents,
-        avgPercentage: parseFloat(avgPercentage),
-        passRate: parseFloat(passRate)
-      })
-    }
-    
-    // Get top students
-    if (type === 'top-students') {
-      const classFilter = className ? { class: className } : {}
-      const studentLimit = parseInt(limit) || 3
-      
-      const topStudents = await Student.find({ ...classFilter, isActive: true })
-        .sort({ 'results.percentage': -1 })
-        .limit(studentLimit)
-        .select('studentName rollNumber class results')
-      
-      return res.json(topStudents)
-    }
-    
-    // Get grade distribution
-    if (type === 'grade-distribution') {
-      const classFilter = className ? { class: className } : {}
-      
-      const students = await Student.find({ ...classFilter, isActive: true })
-      
-      const gradeCounts = {
-        'A+': 0, 'A': 0, 'B': 0, 'C': 0, 'D': 0, 'F': 0
-      }
-      
-      students.forEach(s => {
-        const grade = s.results?.grade || 'F'
-        if (gradeCounts.hasOwnProperty(grade)) {
-          gradeCounts[grade]++
-        }
-      })
-      
-      return res.json(gradeCounts)
-    }
-    
-    res.status(400).json({ error: 'Invalid analytics type. Use: statistics, top-students, or grade-distribution' })
   } catch (error) {
-    console.error('Error fetching analytics:', error)
+    console.error('Analytics API error:', error)
     res.status(500).json({ 
       error: 'Failed to fetch analytics', 
-      details: error.message,
-      fallback: {
-        totalStudents: 0,
-        avgPercentage: 0,
-        passRate: 0
-      }
+      details: error.message 
     })
   }
 }
