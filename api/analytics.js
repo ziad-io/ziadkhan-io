@@ -71,10 +71,9 @@ module.exports = async (req, res) => {
   
   try {
     const { type, class: className, limit } = req.query
+    console.log('Analytics request:', { type, className, limit })
     
     // Return working demo data
-    console.log('Using demo data for analytics')
-    
     if (type === 'statistics') {
       return res.json({
         totalStudents: 15,
