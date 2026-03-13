@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "vercel dev",
-    "build": "cd GpsDmc && npm run build",
+    "build": "cd GpsDmc && npm install && npm run build",
     "start": "vercel start"
   },
   "dependencies": {

@@ -1,5 +1,5 @@
 {
   "version": 2,
-  "buildCommand": "cd GpsDmc && npm install && npm run build",
-  "outputDirectory": "dist"
+  "buildCommand": "npm install && npm run build",
+  "outputDirectory": "GpsDmc/dist"
 }
