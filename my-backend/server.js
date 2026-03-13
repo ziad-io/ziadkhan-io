@@ -50,6 +50,35 @@ mongoose.connection.on('disconnected', () => {
 
 // API Routes
 
+// Root API endpoint - shows all available endpoints
+app.get('/api', (req, res) => {
+  res.json({
+    message: 'GPS DMC Backend API',
+    version: '1.0.0',
+    status: 'Running',
+    endpoints: {
+      health: '/api/health',
+      students: {
+        all: '/api/students',
+        byRollNumber: '/api/students/:rollNumber',
+        byClass: '/api/students/class/:className'
+      },
+      analytics: {
+        statistics: '/api/analytics?type=statistics',
+        topStudents: '/api/analytics?type=top-students&limit=3',
+        gradeDistribution: '/api/analytics?type=grade-distribution'
+      },
+      stats: {
+        classStatistics: '/api/stats/class/:className?',
+        gradeDistribution: '/api/stats/grades/:className?',
+        topStudents: '/api/stats/top/:className?'
+      }
+    },
+    database: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected',
+    timestamp: new Date().toISOString()
+  })
+})
+
 // Health Check
 app.get('/api/health', (req, res) => {
   res.json({ 
