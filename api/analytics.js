@@ -68,13 +68,59 @@ module.exports = async (req, res) => {
     const { type, class: className, limit } = req.query
     console.log('Analytics request:', { type, className, limit })
     
-    // Connect to database
+    // Check if MongoDB is configured
+    const MONGODB_URI = process.env.MONGODB_URI
+    if (!MONGODB_URI || MONGODB_URI === 'mongodb://localhost:27017/gps_dmc_db') {
+      // Return demo data when MongoDB is not configured
+      if (type === 'statistics') {
+        return res.json({
+          totalStudents: 15,
+          avgPercentage: 72.5,
+          passRate: 80.0,
+          message: 'Demo data - Configure MONGODB_URI in Vercel environment variables'
+        })
+      }
+      
+      if (type === 'top-students') {
+        return res.json([
+          {
+            rollNumber: '001',
+            studentName: 'Ahmed Khan',
+            class: '5',
+            results: { percentage: 92 }
+          },
+          {
+            rollNumber: '002', 
+            studentName: 'Fatima Ali',
+            class: '5',
+            results: { percentage: 88 }
+          },
+          {
+            rollNumber: '003',
+            studentName: 'Muhammad Hassan',
+            class: '4', 
+            results: { percentage: 85 }
+          }
+        ])
+      }
+      
+      if (type === 'grade-distribution') {
+        return res.json({
+          'A+': 2, 'A': 3, 'B': 5, 'C': 3, 'D': 2, 'F': 0,
+          message: 'Demo data - Configure MONGODB_URI in Vercel environment variables'
+        })
+      }
+      
+      return res.status(400).json({ error: 'Invalid analytics type. Use: statistics, top-students, or grade-distribution' })
+    }
+    
+    // Connect to database if configured
     await connectDB()
     
     if (!isConnected) {
       return res.status(500).json({ 
         error: 'Database connection failed',
-        message: 'Unable to connect to MongoDB. Please check your connection string.',
+        message: 'Unable to connect to MongoDB. Please check your MONGODB_URI environment variable.',
         fallback: {
           totalStudents: 0,
           avgPercentage: 0,
